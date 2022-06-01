@@ -9,27 +9,12 @@ Docker compose example usage:
 ```
 version: '3'
 
-networks:
-  migrate-test:
-    driver: bridge
-
-services:  
-  db:
-    image: mariadb:10.5
-    ports:
-      - "3308:3306"
-    expose:
-      - "3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: Pass1word
-    restart: on-failure
-    volumes:
-      - ./init:/docker-entrypoint-initdb.d
-    networks:
-      - migrate-test
-  migrate-rules-db:
+services: 
+  ...
+ 
+  migrate-example-db:
     image: migrate_wait:latest
-    command: -c "waitforit -timeout=30 -retry=1000 -debug -address=tcp://db:3306 -- echo starting migration && migrate -path=/migrations -database mysql://root:Pass1word@tcp\(db:3306\)/rules up"
-    networks:
-      - migrate-test
+    command: -c "waitforit -timeout=30 -retry=1000 -debug -address=tcp://db:3306 -- echo starting migration && migrate -path=/migrations -database mysql://root:Pass1word@tcp\(db:3306\)/example up"
+    volumes:
+      - migrations/_db:/migrations
 ```
